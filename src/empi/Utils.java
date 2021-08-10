@@ -66,15 +66,15 @@ public class Utils {
         return false;
     }
 
-    public double solve(ArrayList<String> equation){
-        int[] numbers = getNumbers(equation);
-        int[] xs = getXs(equation);
-        double leftSide = xs[0] - xs[1];
-        double rightSide = numbers[1] - numbers[0];
-        return rightSide / leftSide;
+    public float solve(ArrayList<String> equation){
+        long[] numbers = getNumbers(equation);
+        long[] xs = getXs(equation);
+        long leftSide = xs[0] - xs[1];
+        long rightSide = numbers[1] - numbers[0];
+        return (float) rightSide / leftSide;
     }
 
-    public int[] getXs(ArrayList<String> equation){
+    public long[] getXs(ArrayList<String> equation){
         ArrayList<ArrayList<String>> xs = new ArrayList<ArrayList<String>>();
         xs.add(new ArrayList<String>());
         for (String element : equation){
@@ -87,60 +87,61 @@ public class Utils {
             }
             xs.get(xs.size() - 1).add(element);
         }
-        ArrayList<ArrayList<Integer>> numberOfXs = new ArrayList<ArrayList<Integer>>();
-        numberOfXs.add(new ArrayList<Integer>());
-        numberOfXs.add(new ArrayList<Integer>());
+        ArrayList<ArrayList<Long>> numberOfXs = new ArrayList<ArrayList<Long>>();
+        numberOfXs.add(new ArrayList<Long>());
+        numberOfXs.add(new ArrayList<Long>());
         for (String element : xs.get(0)){
             String processedElement = element.substring(0, element.length() - 1);
             if (processedElement.equals("+")){
-                numberOfXs.get(0).add(1);
+                numberOfXs.get(0).add(1L);
                 continue;
             }
             if (processedElement.equals("-")){
-                numberOfXs.get(0).add(-1);
+                numberOfXs.get(0).add(-1L);
                 continue;
             }
-            numberOfXs.get(0).add(StringToInt(processedElement));
+            numberOfXs.get(0).add(StringToLong(processedElement));
         }
         for (String element : xs.get(1)){
             String processedElement = element.substring(0, element.length() - 1);
             if (processedElement.equals("+")){
-                numberOfXs.get(1).add(1);
+                numberOfXs.get(1).add(1L);
                 continue;
             }
             if (processedElement.equals("-")){
-                numberOfXs.get(1).add(-1);
+                numberOfXs.get(1).add(-1L);
                 continue;
             }
-            numberOfXs.get(1).add(StringToInt(processedElement));
+            numberOfXs.get(1).add(StringToLong(processedElement));
         }
-        int leftSide = 0;
-        int rightSide = 0;
-        for (int element : numberOfXs.get(0)){
+        long leftSide = 0L;
+        long rightSide = 0L;
+        for (double element : numberOfXs.get(0)){
             leftSide += element;
         }
-        for (int element : numberOfXs.get(1)){
+        for (double element : numberOfXs.get(1)){
             rightSide += element;
         }
-        return new int[] {leftSide, rightSide};
+        numberOfXs.clear();
+        return new long[] {leftSide, rightSide};
     }
 
-    public int[] getNumbers(ArrayList<String> equation){
-        ArrayList<ArrayList<Integer>> result = new ArrayList<ArrayList<Integer>>();
-        result.add(new ArrayList<Integer>());
+    public long[] getNumbers(ArrayList<String> equation){
+        ArrayList<ArrayList<Long>> result = new ArrayList<ArrayList<Long>>();
+        result.add(new ArrayList<Long>());
         for (String element : equation) {
             if (element.equals("=")) {
-                result.add(new ArrayList<Integer>());
+                result.add(new ArrayList<Long>());
                 continue;
             }
             if (isX(element)){
                 continue;
             }
-            result.get(result.size() - 1).add(StringToInt(element));
+            result.get(result.size() - 1).add(StringToLong(element));
         }
 
-        int leftSide = 0;
-        int rightSide = 0;
+        long leftSide = 0L;
+        long rightSide = 0L;
 
         for (int i = 0; i < result.get(0).size(); i++) {
             leftSide += result.get(0).get(i);
@@ -152,7 +153,7 @@ public class Utils {
 
         result.clear();
 
-        return new int[] {leftSide, rightSide};
+        return new long[] {leftSide, rightSide};
     }
 
     public boolean isX(String sample){
@@ -200,6 +201,18 @@ public class Utils {
         }
         else{
             return result;
+        }
+    }
+
+    public long StringToLong(String number){
+        char status = number.charAt(0);
+        String processedNumber = number.substring(1, number.length());
+        long rezult = Long.parseLong(processedNumber);
+        if (status == '-'){
+            return -rezult;
+        }
+        else{
+            return rezult;
         }
     }
 

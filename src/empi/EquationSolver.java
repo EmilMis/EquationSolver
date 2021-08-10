@@ -11,13 +11,14 @@ public class EquationSolver {
         double solution = utils.solve(equationNeat);
         long endTime = System.nanoTime();
         System.out.println("Solved in " + ((endTime - startTime) / 1000000) + " milliseconds");
-        int[] numbers = utils.getNumbers(equationNeat);
-        int[] xs = utils.getXs(equationNeat);
+        long[] numbers = utils.getNumbers(equationNeat);
+        long[] xs = utils.getXs(equationNeat);
         System.out.println(equation);
         System.out.println(equationArrayList);
         System.out.println(equationNeat);
-        System.out.println(Integer.toString(xs[0]) + "x + " + Integer.toString(numbers[0]) +  "x = "+ Integer.toString(xs[1]) + " + " + Integer.toString(numbers[1]));
-        System.out.println(solution);
+        System.out.println(xs[0] + "x + " + numbers[0] +  " = "+ xs[1] + "x + " + numbers[1]);
+        System.out.println((xs[0] - xs[1]) + "x = " + (numbers[1] - numbers[0]));
+        System.out.println("x = " + solution);
     }
     public void SolveEquation(){
         Utils utils = new Utils();
