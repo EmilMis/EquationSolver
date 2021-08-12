@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="EquationSolver">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/out/artifacts/EquationSolver/EquationSolver.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

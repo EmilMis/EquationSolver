@@ -40,16 +40,16 @@ public class Utils {
             if (IsNumber(element)){
                 if (i == 0){
                     equation.set(i, "+" + element);
-                    i = 0;
+                    i -= 1;
                 }
                 else if (!equation.get(i - 1).equals("=")){
                     equation.set(i - 1, equation.get(i - 1) + element);
                     equation.remove(i);
-                    i = 0;
+                    i -= 1;
                 }
                 else{
                     equation.set(i, "+" + element);
-                    i = 0;
+                    i -= 1;
                 }
             }
         }

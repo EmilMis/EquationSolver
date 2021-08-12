@@ -17,9 +17,9 @@ public class EquationSolver {
         System.out.println(equation);
         System.out.println(equationArrayList);
         System.out.println(equationNeat);
-        System.out.println(xs[0] + "x + " + numbers[0] +  " = "+ xs[1] + "x + " + numbers[1]);
+        System.out.println(xs[0] + "x + " + numbers[0] + " = " + xs[1] + "x + " + numbers[1]);
         System.out.println((xs[0] - xs[1]) + "x = " + (numbers[1] - numbers[0]));
-        System.out.print("x = " + (numbers[1] - numbers[0]) + "/" + (xs[0] - xs[1]) +  " = " + solution + " ≈ ");
+        System.out.print("x = " + (numbers[1] - numbers[0]) + "/" + (xs[0] - xs[1]) + " = " + solution + " = ");
         System.out.printf("%.0f", solution);
     }
     public void SolveEquation(){
@@ -39,8 +39,8 @@ public class EquationSolver {
                 "time needed for a cheetah to\ncross " + Float.toString((float) (120000000 / (60 * 60 * 1000)) * delay) + " millimeters\nWhen at full speed, of course",
                 "I ran out of ideas to put here",
                 "time necessary to find stupid things online",
-                "t1me n3eded f0r mY c4T t0 f3ll asl3ep My<<<<< K3yb0ard---------!",
-                "way less time to put another good fact here",
+                "t1me n3eded f0r mY c4T t0 f3ll asl3ep 0n My<<<<< K3yb0ard---------!",
+                "way less time necessary to put another good fact here",
                 "c++ is faster, though",
                 "time needed for Windows to crash",
                 "My ccat 1s st1ll H3re-..,,>"
