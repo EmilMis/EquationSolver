@@ -33,6 +33,106 @@ public class Utils {
         return eq;
     }
 
+    public boolean isOperator(char sample){
+        char[] operators = {'+', '-', '=', '*', '/'};
+        for (char element : operators){
+            if (element == sample){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public ArrayList<String> fix(ArrayList<String> brokenEquation){
+        //3x+12=0
+        ArrayList<String> fixedEquation = new ArrayList<String>();
+        String part = "";
+        for (String element : brokenEquation){
+            for (int i = 0; i < element.length(); i++) {
+                char digit = element.charAt(i);
+                if (isOperator(digit)){
+                    if (part != ""){
+                        fixedEquation.add(part);
+                        part = "";
+                    }
+                    fixedEquation.add(Character.toString(digit));
+                    continue;
+                }
+                part += digit;
+                if (i == element.length() - 1){
+                    if (part != ""){
+                        fixedEquation.add(part);
+                        part = "";
+                    }
+                }
+            }
+        }
+        boolean isPrevElementNumber = false;
+        for (int i = 0; i < fixedEquation.size(); i++) {
+            String element = fixedEquation.get(i);
+            if (i == 0){
+                isPrevElementNumber = IsNumber(element);
+                continue;
+            }
+            boolean isElementNumber = IsNumber(element);
+            if (isPrevElementNumber && isElementNumber){
+                fixedEquation.set(i - 1, fixedEquation.get(i - 1) + element);
+                fixedEquation.remove(i);
+                i -= 1;
+            }
+            isPrevElementNumber = isElementNumber;
+        }
+        boolean isPrevElementOperator = false;
+        for (int i = 0; i < fixedEquation.size(); i++) {
+            String element = fixedEquation.get(i);
+            if (i == 0){
+                isPrevElementOperator = isOperator(element.charAt(0));
+                continue;
+            }
+            boolean isElementOperator = isOperator(element.charAt(0));
+            if (isElementOperator && isPrevElementOperator){
+                char operator1 = fixedEquation.get(i - 1).charAt(0);
+                char operator2 = fixedEquation.get(i).charAt(0);
+                if ((operator1 == '+' || operator1 == '-') && (operator2 == '+' || operator2 == '-')){
+                    if (operator1 == '+'){
+                        fixedEquation.set(i - 1, Character.toString(operator2));
+                        fixedEquation.remove(i);
+                        i -= 1;
+                    }
+                    else{
+                        if (operator2 == '-'){
+                            fixedEquation.set(i - 1, Character.toString('+'));
+                            fixedEquation.remove(i);
+                            i -= 1;
+                        }
+                        else{
+                            fixedEquation.set(i - 1, Character.toString('-'));
+                            fixedEquation.remove(i);
+                            i -= 1;
+                        }
+                    }
+                }
+                else if ((operator1 == '*' || operator1 == '/') && (operator2 == '*' || operator2 == '/')){
+                    if (operator1 == operator2){
+                        fixedEquation.remove(i);
+                        i -= 1;
+                    }
+                    else{
+                        fixedEquation.remove(i - 1);
+                        fixedEquation.remove(i - 1);
+                        i -= 2;
+                    }
+                }
+                else if (operator1 == operator2){
+                    fixedEquation.remove(i - 1);
+                    i -= 1;
+                }
+            }
+            isPrevElementOperator = isElementOperator;
+        }
+        return fixedEquation;
+    }
+
     public ArrayList<String> neatify(ArrayList<String> eq){
         ArrayList<String> equation = eq;
         for (int i = 0; i < equation.size(); i++) {
@@ -42,7 +142,7 @@ public class Utils {
                     equation.set(i, "+" + element);
                     i -= 1;
                 }
-                else if (!equation.get(i - 1).equals("=")){
+                else if (!equation.get(i - 1).equals("=")  && !equation.get(i - 1).equals("*") && !equation.get(i - 1).equals("/")){
                     equation.set(i - 1, equation.get(i - 1) + element);
                     equation.remove(i);
                     i -= 1;
@@ -53,7 +153,77 @@ public class Utils {
                 }
             }
         }
+        for (int i = 0; i < equation.size(); i++){
+            String part = equation.get(i);
+            if (part.equals("*") || part.equals("/")){
+                String solved = solveMini(equation.get(i - 1), equation.get(i + 1), part);
+                equation.set(i, solved);
+                equation.remove(i + 1);
+                equation.remove(i - 1);
+                i -= 1;
+            }
+        }
         return equation;
+    }
+
+    public String solveMini(String firstNumber, String secondNumber, String operation){
+        String processedFirstNumber = firstNumber.substring(1, firstNumber.length());
+        String processedSecondNumber = secondNumber.substring(1, secondNumber.length());
+        if (isX(processedFirstNumber) || isX(processedSecondNumber)){
+            if (isX(processedFirstNumber) && isX(processedSecondNumber)){
+                return "none";
+            }
+            else if (isX(processedSecondNumber)){
+                if (processedSecondNumber.length() == 1){
+                    return firstNumber + "x";
+                }
+                String SecondNumberWithoutX = secondNumber.substring(0, secondNumber.length() - 1);
+                long result;
+                if (operation.equals("*")){
+                    result = StringToLong(firstNumber) * StringToLong(SecondNumberWithoutX);
+                }
+                else{
+                    result = StringToLong(firstNumber) / StringToLong(SecondNumberWithoutX);
+                }
+                if (result > 0){
+                    return "+" + Long.toString(result) + "x";
+                }
+                return Long.toString(result) + "x";
+            }
+            else{
+                if (processedFirstNumber.length() == 1){
+                    return secondNumber + "x";
+                }
+                String FirstNumberWithoutX = firstNumber.substring(0, firstNumber.length() - 1);
+                long result;
+                if (operation.equals("*")){
+                    result = StringToLong(FirstNumberWithoutX) * StringToLong(secondNumber);
+                }else{
+                    result = StringToLong(FirstNumberWithoutX) / StringToLong(secondNumber);
+                }
+                if (result > 0){
+                    return "+" + Long.toString(result) + "x";
+                }
+                return Long.toString(result) + "x";
+            }
+        }
+        long firstNumberLong = StringToLong(firstNumber);
+        long secondNumberLong = StringToLong(secondNumber);
+        if (operation.equals("*")){
+            long result = firstNumberLong * secondNumberLong;
+            if (result > 0){
+                return "+" + Long.toString(result);
+            }
+            return Long.toString(result);
+        }else if (operation.equals("/")){
+            long result2 = firstNumberLong / secondNumberLong;
+            if (result2 > 0){
+                return "+" + Long.toString(result2);
+            }
+            return Long.toString(result2);
+        }else{
+            return "invalid operation";
+        }
     }
 
     public boolean IsNumber(String sample){
