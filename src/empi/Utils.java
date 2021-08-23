@@ -34,7 +34,7 @@ public class Utils {
     }
 
     public boolean isOperator(char sample){
-        char[] operators = {'+', '-', '=', '*', '/'};
+        char[] operators = {'+', '-', '=', '*', '/', '(', ')'};
         for (char element : operators){
             if (element == sample){
                 return true;
@@ -50,6 +50,7 @@ public class Utils {
         for (String element : brokenEquation){
             for (int i = 0; i < element.length(); i++) {
                 char digit = element.charAt(i);
+
                 if (isOperator(digit)){
                     if (part != ""){
                         fixedEquation.add(part);
@@ -124,13 +125,132 @@ public class Utils {
                     }
                 }
                 else if (operator1 == operator2){
-                    fixedEquation.remove(i - 1);
-                    i -= 1;
+                    if (operator1 == '(' || operator1 == ')'){
+                        continue;
+                    }
+                    else {
+                        fixedEquation.remove(i - 1);
+                        i -= 1;
+                    }
                 }
             }
             isPrevElementOperator = isElementOperator;
         }
         return fixedEquation;
+    }
+
+    public ArrayList<String> simplifyParentheses(ArrayList<String> fixedEquation){
+        //quickly check if there are parentheses
+        System.out.println(fixedEquation);
+        boolean areThereParentheses = false;
+        for (String element : fixedEquation){
+            if (element.equals("(") || element.equals(")")){
+                areThereParentheses = true;
+                break;
+            }
+        }
+        if (!areThereParentheses){
+            return fixedEquation;
+        }
+
+        int parOpen = 0;
+
+        ArrayList<ArrayList<String>> parenthesesExpressions = new ArrayList<ArrayList<String>>();
+        ArrayList<ArrayList<Integer>> parenthesesIndexes = new ArrayList<ArrayList<Integer>>();
+        for (int i = 0; i < fixedEquation.size(); i++){
+            String element = fixedEquation.get(i);
+            if (element.equals("(")){
+                parenthesesExpressions.add(new ArrayList<String>());
+                parenthesesIndexes.add(new ArrayList<Integer>());
+                parOpen ++;
+                parenthesesExpressions.get(parenthesesExpressions.size() - 1).add(element);
+                parenthesesIndexes.get(parenthesesIndexes.size() - 1).add(i);
+                for (int j = i + 1; j < fixedEquation.size(); j++) {
+                    String element2 = fixedEquation.get(j);
+                    System.out.println(element2);
+                    parenthesesExpressions.get(parenthesesExpressions.size() - 1).add(element2);
+                    parenthesesIndexes.get(parenthesesIndexes.size() - 1).add(j);
+                    if (element2.equals(")")){
+                        parOpen --;
+                    }
+                    if (parOpen == 0) {
+                        System.out.println("\n\n");
+                        break;
+                    }
+                    if (element2.equals("(")){
+                        parOpen ++;
+                    }
+                    i = j;
+                }
+            }
+        }
+        System.out.println(parenthesesExpressions);
+        System.out.println(parenthesesIndexes);
+        for (int i = 0; i < parenthesesIndexes.size(); i++){
+            for (int j = 0; j < parenthesesIndexes.get(i).size(); j++) {
+                int index = parenthesesIndexes.get(i).get(j);
+                fixedEquation.set(index, "none");
+            }
+        }
+
+
+
+        return new ArrayList<String>();
+    }
+
+    public ArrayList<String> solveParentheses(ArrayList<String> parenthesesExp){
+        ArrayList<String> result = parenthesesExp;
+        System.out.println(result);
+        result.remove(0);
+        result.remove(result.size() - 1);
+        result = neatify(result);
+        System.out.println(result);
+        boolean containsParentheses = false;
+        for (String element : result){
+            if (element.equals("(") || element.equals(")")){
+                containsParentheses = true;
+                break;
+            }
+        }
+
+        int returnValue = 0;
+        int returnXValue = 0;
+        for (String element : result){
+            if (isX(element)){
+                if (element.length() < 3) {
+                    if (element.charAt(0) == '-') {
+                        returnXValue --;
+                    }
+                    else{
+                        returnXValue ++;
+                    }
+                }
+                else{
+                    int xValue = Integer.parseInt(element.substring(1, element.length() - 1));
+                    if (element.charAt(0) == '+') {
+                        returnXValue += xValue;
+                    }
+                    else{
+                        returnXValue -= xValue;
+                    }
+                }
+                continue;
+            }
+            returnValue += StringToLong(element);
+        }
+        ArrayList<String> retValue = new ArrayList<String>();
+        if (returnValue < 0) {
+            retValue.add(Integer.toString(returnValue));
+        }else{
+            retValue.add("+" + Integer.toString(returnValue));
+        }
+        if (returnXValue < 0) {
+            retValue.add(Integer.toString(returnXValue) + "x");
+        }else{
+            retValue.add("+" + Integer.toString(returnXValue) + "x");
+        }
+
+        return retValue;
     }
 
     public ArrayList<String> neatify(ArrayList<String> eq){
@@ -142,7 +262,7 @@ public class Utils {
                     equation.set(i, "+" + element);
                     i -= 1;
                 }
-                else if (!equation.get(i - 1).equals("=")  && !equation.get(i - 1).equals("*") && !equation.get(i - 1).equals("/")){
+                else if (!equation.get(i - 1).equals("=")  && !equation.get(i - 1).equals("*") && !equation.get(i - 1).equals("/") && !equation.get(i - 1).equals("(") && !equation.get(i - 1).equals(")")){
                     equation.set(i - 1, equation.get(i - 1) + element);
                     equation.remove(i);
                     i -= 1;
@@ -153,6 +273,7 @@ public class Utils {
                 }
             }
         }
+        System.out.println(equation);
         for (int i = 0; i < equation.size(); i++){
             String part = equation.get(i);
             if (part.equals("*") || part.equals("/")){
