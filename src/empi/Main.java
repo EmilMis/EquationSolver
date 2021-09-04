@@ -1,17 +1,17 @@
 package empi;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args){
         try {
+            String equation = args[0];
             EquationSolver equationSolver = new EquationSolver();
-            equationSolver.SolveEquation();
-        }catch (Exception exception){
-            if (exception instanceof NumberFormatException){
-                System.out.print("n! " + exception +  "|");
-            }
-            else{
-                System.out.print("?! " + exception + "|");
-            }
+            equationSolver.SolveGivenEquation(equation);
+        }
+        catch (Exception e){
+            System.out.println("Error\nDetails: " + e);
         }
     }
 }
